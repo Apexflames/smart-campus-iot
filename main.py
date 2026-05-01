@@ -419,7 +419,3 @@ async def websocket_endpoint(ws: WebSocket, token: Optional[str] = None):
 @app.get("/")
 def serve_frontend():
     return FileResponse("static/index.html")
-
-@app.get("/{path:path}")
-def catch_all(path: str):
-    return FileResponse("static/index.html")
