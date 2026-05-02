@@ -10,9 +10,23 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    # Roles: superadmin | admin | officer | viewer
     role = Column(String, default="admin")
     created_at = Column(DateTime, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
+    audit_logs = relationship("AuditLog", back_populates="user")
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, ForeignKey("users.username"))
+    action = Column(String)       # e.g. REGISTER_DEVICE, RESOLVE_ALERT, LOGIN
+    target = Column(String)       # e.g. device_id or alert_id
+    detail = Column(Text)         # human-readable description
+    ip_address = Column(String, nullable=True)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    user = relationship("User", back_populates="audit_logs")
 
 
 class Device(Base):
